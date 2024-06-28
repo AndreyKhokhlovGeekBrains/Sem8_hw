@@ -15,49 +15,65 @@
 #include <stdlib.h>
 #include <math.h>
 
-#define MAX_SIZE 25
+#define MAX_SIZE 5
 
-void print_arr(int *arr, int size) {
+void print_quadratic_arr(int **arr, int size) {
     for(int i = 0; i < size; i++) {
-        printf("%d ", arr[i]);
-    }
+            for(int j = 0; j < size; j++) {
+                printf("%d ", arr[i][j]);
+            }
+            printf("\n");
+        }
 }
 
-int* read_numbers(void) {
-    int* temp_arr = (int*)malloc(MAX_SIZE * sizeof(int));
-    int n;
+int** read_numbers(void) {
+    // Allocate memory for an array of pointers
+    int** temp_arr = (int**)malloc(MAX_SIZE * sizeof(int*));
+    // Allocate memory for each row
+    for(int i = 0; i < MAX_SIZE; i++) {
+        temp_arr[i] = (int*)malloc(MAX_SIZE * sizeof(int));
+    }
+
     printf("Enter the numbers:\n");
-    for(int i = 0; i < MAX_SIZE; i++)
-    {
-        scanf("%d", &n);
-        temp_arr[i] = n;
+
+    for(int i = 0; i < MAX_SIZE; i++) {
+        for(int j = 0; j < MAX_SIZE; j++) {
+            scanf("%d", &temp_arr[i][j]);
+        }
     }
 
     return temp_arr;
 }
 
-int count_positive_elements_above_diagonal_average(int size, int a[]) {
-    int matrix_size = sqrt(size);
+int count_positive_elements_above_diagonal_average(int size, int **a) {
     int diagonal_sum = 0;
     int count = 0;
 
-    for(int i = 0; i < size; i += matrix_size + 1) {
-        diagonal_sum += a[i];
+    for(int i = 0; i < size; i ++) {
+        diagonal_sum += a[i][i];
     }
 
-    int diagonal_average = diagonal_sum / matrix_size;
+    int diagonal_average = diagonal_sum / size;
 
     for(int i = 0; i < size; i++) {
-        if(a[i] > 0 && a[i] > diagonal_average) {
+        for(int j = 0; j < size; j++) {
+            if(a[i][j] > 0 && a[i][j] > diagonal_average) {
             count++;
-        }
+            }
+        }     
     }
     return count;
 }
 
 int main(void) {
-    int *my_arr = read_numbers();
+    int** my_arr = read_numbers();
+    // print_quadratic_arr(my_arr, MAX_SIZE);
+
     printf("%d", count_positive_elements_above_diagonal_average(MAX_SIZE, my_arr));
+
+    for(int i = 0; i < MAX_SIZE; i++) {
+        free(my_arr[i]);
+    }
     free(my_arr);
 
     return 0;
